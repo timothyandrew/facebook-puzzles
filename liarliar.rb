@@ -29,13 +29,24 @@ def traverse(root)
   
   root.targets.each do |target|
     if $x.include?(target.name) or $y.include?(target.name)
-      return
+       if not $x.include?(root.name) and not $y.include?(root.name)
+       # If target has already been selected
+       if $y.include?(target.name)
+         $x.push(root.name)
+       elsif $x.include?(target.name)
+         $y.push(root.name)
+       end
     end
+    return
+
+    end
+    #If root has already been selected
     if $x.include?(root.name)
       $y.push(target.name)
     elsif $y.include?(root.name)
       $x.push(target.name)
     end
+
        
     traverse(target) 
   end
@@ -79,17 +90,9 @@ for name,node in nodes
 end
 
 
-#Find node with highest degree
-largest = 0
-largest_node = nil
-for target_name, targets in target_names
-  if targets.length > largest
-    largest = targets.length
-    largest_node = nodes[target_name]
-  end
-end
-
 #Split up the nodes (graph coloring)
-traverse(largest_node)
+for name, node in nodes
+  traverse(node)
+end
 
 puts [$x.length,$y.length].max.to_s + ' ' + [$x.length,$y.length].min.to_s

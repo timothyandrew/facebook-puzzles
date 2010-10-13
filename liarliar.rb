@@ -3,6 +3,8 @@
 class Node
   attr_writer :targets
   attr_reader :targets
+  attr_writer :color
+  attr_reader :color
   attr_reader :name
   # targets -> array of nodes
   # name -> node name
@@ -13,13 +15,13 @@ class Node
   end
 end
 
-$x = Array.new
-$y = Array.new
+$x = Array.new #color red
+$y = Array.new #color blue
 
 $first = true
 def traverse(root)
   if $first
-    $x.push(root.name)
+    root.color = 'red'
     $first = false
   end
   
@@ -28,22 +30,22 @@ def traverse(root)
   end
   
   root.targets.each do |target|
-    if $x.include?(target.name) or $y.include?(target.name)
-       if not $x.include?(root.name) and not $y.include?(root.name)
+    if target.color
+       if root.color == nil
          # If target has already been selected
-         if $y.include?(target.name)
-           $x.push(root.name)
-         elsif $x.include?(target.name)
-           $y.push(root.name)
+         if target.color == 'blue'
+           root.color = 'red'
+         elsif target.color == 'red'
+           root.color = 'blue'
          end
        end
        return
     end
     #If root has already been selected
-    if $x.include?(root.name)
-      $y.push(target.name)
-    elsif $y.include?(root.name)
-      $x.push(target.name)
+    if root.color == 'red'
+      target.color = 'blue'
+    elsif root.color == 'blue'
+      target.color = 'red'
     end
     traverse(target) 
   end
@@ -92,20 +94,27 @@ for name,node in nodes
 end
 
 
-# Split up the nodes (graph coloring)
-i=0
-for name, node in nodes
-  #puts 'PASS 1: Traversing ' + i.to_s
-  #i += 1
-  traverse(node)
+# Split up the nodes 3 passes
+3.times do
+  for name, node in nodes
+    traverse(node)
+  end
 end
 
-# 2nd Pass
-i=0
+# Final Pass
+l1 = 0
+l2 = 0
 for name, node in nodes
-  #puts 'PASS 2: Traversing ' + i.to_s
-  #i += 1
   traverse(node)
+  
+  if node.color == 'red'
+    l1 += 1
+  elsif node.color == 'blue'
+    l2 += 1
+  elsif node.color == nil
+    puts "Error!!"
+  end
 end
 
-puts [$x.length,$y.length].max.to_s + ' ' + [$x.length,$y.length].min.to_s
+
+puts [l1,l2].max.to_s + ' ' + [l1,l2].min.to_s

@@ -30,15 +30,14 @@ def traverse(root)
   root.targets.each do |target|
     if $x.include?(target.name) or $y.include?(target.name)
        if not $x.include?(root.name) and not $y.include?(root.name)
-       # If target has already been selected
-       if $y.include?(target.name)
-         $x.push(root.name)
-       elsif $x.include?(target.name)
-         $y.push(root.name)
+         # If target has already been selected
+         if $y.include?(target.name)
+           $x.push(root.name)
+         elsif $x.include?(target.name)
+           $y.push(root.name)
+         end
        end
-    end
-    return
-
+       return
     end
     #If root has already been selected
     if $x.include?(root.name)
@@ -76,6 +75,9 @@ while i<lines.length
   if lines[i] =~ /(\w+)\s+(\d)/
     nodes[$~[1]] = Node.new($~[1])
     target_names[$~[1]] = Array.new
+    if $~[2] == 0
+      next
+    end
     1.upto($~[2].to_i) do |x|
       target_names[$~[1]].push(lines[i+x])
     end
@@ -89,6 +91,11 @@ for name,node in nodes
   end
 end
 
+
+#Split up the nodes (graph coloring)
+for name, node in nodes
+  traverse(node)
+end
 
 #Split up the nodes (graph coloring)
 for name, node in nodes

@@ -45,8 +45,6 @@ def traverse(root)
     elsif $y.include?(root.name)
       $x.push(target.name)
     end
-
-       
     traverse(target) 
   end
 end
@@ -65,7 +63,7 @@ for i in 0...lines.length
   end
 end
 
-size = lines.shift
+lines.shift
 
 # Create nodes
 i = 0
@@ -85,6 +83,8 @@ while i<lines.length
   end
 end
 
+# Set Targets for all the nodes.
+# (Somewhat equal to drawing edges between vertices)
 for name,node in nodes
   for target_name in target_names[name]
     node.targets.push(nodes[target_name])
@@ -92,13 +92,19 @@ for name,node in nodes
 end
 
 
-#Split up the nodes (graph coloring)
+# Split up the nodes (graph coloring)
+i=0
 for name, node in nodes
+  #puts 'PASS 1: Traversing ' + i.to_s
+  #i += 1
   traverse(node)
 end
 
-#Split up the nodes (graph coloring)
+# 2nd Pass
+i=0
 for name, node in nodes
+  #puts 'PASS 2: Traversing ' + i.to_s
+  #i += 1
   traverse(node)
 end
 
